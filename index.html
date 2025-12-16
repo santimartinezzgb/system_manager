@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="/src/styles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tauri App</title>
+  <script type="module" src="/src/main.ts" defer></script>
+</head>
+
+<body id="body">
+  <div id="contorno_pantalla_principal">
+    <div id="pantalla_principal">
+
+      <section id="barra_tareas">a</section>
+      <section id="panel_datos">
+
+        <article id="titular_y_buscador">
+          <h1 id="titulo">System Manager</h1>
+          <input type="text" id="buscador" placeholder="Buscar..." />
+        </article>
+
+        <article id="cuadros_info_estatica">
+          <div id="datos_principales">
+            <p id="os_name" />
+            <p id="os_version" />
+            <p id="kernel_version" />
+            <p id="host_name" />
+          </div>
+
+          <section id="menu_cuadros_secundarios">
+
+            <div id="submenu_arriba"></div>
+            <div id="submenu_abajo"></div>
+
+          </section>
+        </article>
+
+        <article id="cuadros_info_dinamica">
+          <div id="menu_ram">
+            <div>RAM</div>
+            <p id="memory"></p>
+            <input type="range" id="rango_memory" />
+          </div>
+          <div id="menu_cpu">
+            <div>CPU</div>
+            <p id="cpu"></p>
+            <input type="range" id="rango_cpu" />
+          </div>
+          <div id="menu_disco">
+            <div>Disco</div>
+            <p id="disk"></p>
+            <input type="range" id="rango_disk" />
+          </div>
+        </article>
+      </section>
+      <section id="otra">a</section>
+
+    </div>
+  </div>
+</body>
+
+</html>
