@@ -12,6 +12,9 @@ struct SystemInfo {
     os_version: String,
     kernel_version: String,
     host_name: String,
+    memory_total: f64,
+    cpu_total: f64,
+    disks_total: f64,
 }
 
 #[tauri::command] // Invocable desde el frontend
@@ -20,12 +23,10 @@ fn get_system_info() -> SystemInfo {
     let mut system = System::new_all(); // Crea un nuevo objeto System
     system.refresh_all(); // Refresca toda la información del sistema
 
-    // Crea el objeto CPU
-    let cpu = format!(
-        "{:.2} / {} CPUs",
-        system.global_cpu_usage(),
-        system.cpus().len()
-    );
+    // Crea el objeto CPU en formato 'núcleos_utilizados / núcleos totales'
+    let cpu_total = system.cpus().len() as f64;
+    let cpu_used = (system.global_cpu_usage() / 100.0) * cpu_total as f32;
+    let cpu = format!("{:.2} / {:.0} CPUs", cpu_used, cpu_total);
 
     // Crea el objeto memoria
     let memory = format!(
@@ -37,17 +38,17 @@ fn get_system_info() -> SystemInfo {
     // Crea la información de los discos
     let disks = Disks::new_with_refreshed_list();
 
-    // Obtiene el primer disco y su espacio total
-    let storage = if let Some(disks) = disks.get(0) {
-        // Si hay al menos un disco
-        let total = disks.total_space() as f64 / 1024.0 / 1024.0 / 1024.0;
-        format!("{:.2} GB", total)
+    // Obtiene el primer disco y su espacio total y usado
+    let (disk_used, disk_total) = if let Some(disk) = disks.get(0) {
+        let total = disk.total_space() as f64 / 1024.0 / 1024.0 / 1024.0;
+        let used = (disk.total_space() - disk.available_space()) as f64 / 1024.0 / 1024.0 / 1024.0;
+        (used, total)
     } else {
-        "N/A".to_string() // Si no hay discos, devuelve "N/A"
+        (0.0, 1.0)
     };
 
-    // Crea el objeto discos
-    let disks = format!("Disks: {:.2} GB", storage);
+    // Crea el objeto discos en formato "usado / total GB"
+    let disks = format!("{:.2} / {:.2} GB", disk_used, disk_total);
 
     // Crea el objeto memoria swap
     let swap = format!(
@@ -55,6 +56,11 @@ fn get_system_info() -> SystemInfo {
         system.used_swap() as f64 / 1024.0 / 1024.0 / 1024.0,
         system.total_swap() as f64 / 1024.0 / 1024.0 / 1024.0
     );
+
+    // Valores totales de memoria, cpu y discos
+    let memory_total = system.total_memory() as f64 / 1024.0 / 1024.0 / 1024.0;
+    let cpu_total = system.cpus().len() as f64;
+    let disks_total = disk_total;
 
     // OBTENER INFORMACIÓN DEL SISTEMA OPERATIVO
     let os_name = sysinfo::System::name().unwrap_or_else(|| "Unknown".to_string());
@@ -72,6 +78,9 @@ fn get_system_info() -> SystemInfo {
         os_version,
         kernel_version,
         host_name,
+        memory_total,
+        cpu_total,
+        disks_total,
     }
 }
 
