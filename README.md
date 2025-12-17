@@ -2,7 +2,7 @@
 
 Aplicación de escritorio multiplataforma construida con Tauri, Vite (TypeScript) y Rust.
 
-Muestra la información estática y dinámica del sistema en directo.
+Muestra la información estática y dinámica del sistema en tiempo real.
 
 ## Estructura del proyecto
 
